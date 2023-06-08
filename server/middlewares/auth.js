@@ -5,6 +5,7 @@ const authMiddleware = async (req, res, next) => {
     console.log('❌ Error authenticating user: no session found');
     return res.status(401).send('Unauthorized');
   } else {
+    console.log('✅ User authenticated');
     next();
   }
 };

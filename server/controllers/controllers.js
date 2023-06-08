@@ -6,7 +6,7 @@ const User = require('../models/user.js');
 const controllers = {};
 
 controllers.hello = async (req, res) => {
-  res.status(200).send('Hello World!');
+  res.status(200).send(req.session);
 };
 
 controllers.createUser = async (req, res) => {
@@ -37,7 +37,8 @@ controllers.createUser = async (req, res) => {
       lastName,
     });
     console.log('✅ User created:', newUser);
-    return res.status(201).send(newUser);
+    req.session.user = newUser.username;
+    return res.status(201).send(req.session.user);
   } catch (error) {
     console.log('❌ Error creating user:', error);
     return res.status(500).send(error);

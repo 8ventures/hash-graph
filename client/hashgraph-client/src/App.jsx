@@ -7,6 +7,7 @@ import HomePage from './views/HomePage';
 import RegistrationForm from './components/RegistrationForm';
 import LoginForm from './components/LoginForm';
 import NotFound from './components/NotFound';
+import Dashboard from './components/Dashboard';
 
 function App() {
   const router = createBrowserRouter([
@@ -21,6 +22,10 @@ function App() {
     {
       path: '/login',
       element: <LoginForm></LoginForm>,
+    },
+    {
+      path: '/dashboard',
+      element: <Dashboard></Dashboard>,
     },
     {
       path: '*',

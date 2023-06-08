@@ -6,15 +6,13 @@ apiService.register = async (user) => {
   try {
     const response = await fetch(`${SERVER_URL}/createUser`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(user),
     });
-    console.log('Response status:', response.status);
-    const data = await response.json();
-    console.log('Response data:', data);
-    return data;
+    return response;
   } catch (error) {
     return error;
   }
@@ -24,30 +22,32 @@ apiService.login = async (username, password) => {
   try {
     const response = await fetch(`${SERVER_URL}/login`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username, password }),
     });
-    const data = await response.json();
-    return data;
+    return response;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 
 apiService.logout = async () => {
+  const cookieValue = document.cookie;
   try {
     const response = await fetch(`${SERVER_URL}/logout`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        Cookie: `${cookieValue}`,
       },
     });
-    const data = await response.json();
-    return data;
+    return response;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 

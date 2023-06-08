@@ -1,11 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Header from './Header';
 import Footer from './Footer';
 import apiService from '../services/ApiService';
 
 const RegistrationForm = () => {
+  const navigate = useNavigate();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -22,17 +25,16 @@ const RegistrationForm = () => {
       username: username,
       password: password,
     };
-    try {
-      const response = await apiService.register(user);
-      console.log(response);
-      console.log(response.status);
-      if (response.status === 201) {
-      } else {
-        setErrorMessage('Error creating user');
-        return;
-      }
-    } catch (error) {
-      console.log(error);
+
+    const response = await apiService.register(user);
+    if (response.status === 201) {
+      console.log('User created successfully');
+      navigate('/dashboard');
+    } else {
+      const responseBody = await response.text(); // Read the response body as JSON
+      console.log(responseBody);
+      setErrorMessage('Error creating user: invalid input');
+      return;
     }
     setFirstName('');
     setLastName('');
@@ -40,6 +42,7 @@ const RegistrationForm = () => {
     setUsername('');
     setPassword('');
     setErrorMessage('');
+    return;
   };
 
   return (
@@ -149,7 +152,7 @@ const RegistrationForm = () => {
               >
                 Register
               </button>
-              <p className="text-red-500 italic m-1">{errorMessage}</p>
+              <p className="text-red-500 italic m-3 text-xs">{errorMessage}</p>
             </div>
           </form>
         </section>

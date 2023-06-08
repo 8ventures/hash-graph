@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/favicon.svg';
+import apiService from '../services/ApiService';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -10,7 +11,10 @@ const Header = () => {
   const handleClicLogin = function () {
     navigate('/login');
   };
-  const handleClickLogout = function () {
+  const handleClickLogout = async function () {
+    const response = await apiService.logout();
+    const responseBody = await response.text();
+    console.log(responseBody);
     navigate('/');
   };
   const handleClickLogo = function () {
