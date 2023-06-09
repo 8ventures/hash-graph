@@ -2,10 +2,22 @@ const express = require('express');
 const cors = require('cors');
 const router = require('./router.js');
 const session = require('express-session');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const apiSocket = require('./ws.js');
 
 const app = express();
 const port = 3000;
 const host = 'localhost';
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+});
 
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
@@ -28,6 +40,19 @@ app.get('*', (_, res) => {
   res.status(404).send('404 Not Found');
 });
 
-app.listen(port, host, () => {
+io.on('connection', (socket) => {
+  console.log(`Socket ${socket.id} connected`);
+});
+
+apiSocket.on('message', (message) => {
+  if (message === 'ping') {
+    socket.send('pong');
+    console.log('Sent Pong');
+  } else {
+    io.emit('apiData', JSON.parse(message));
+  }
+});
+
+httpServer.listen(port, host, () => {
   console.log(`🚀 HashGraph Server listening at http://${host}:${port}`);
 });
