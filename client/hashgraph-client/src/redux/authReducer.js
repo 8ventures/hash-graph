@@ -1,5 +1,11 @@
 const initialState = {
   isAuthenticated: false,
+  user: {
+    username: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+  },
 };
 
 const authReducer = (state = initialState, action) => {
@@ -13,6 +19,11 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isAuthenticated: false,
+      };
+    case 'SET_USER':
+      return {
+        ...state,
+        user: action.payload,
       };
     default:
       return state;

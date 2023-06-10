@@ -1,13 +1,16 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Footer from './Footer';
 import Header from './header';
 import apiService from '../services/ApiService';
+import { login } from '../redux/authActions';
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -18,6 +21,7 @@ const LoginForm = () => {
     event.preventDefault();
     const response = await apiService.login(username, password);
     if (response.status === 200) {
+      await dispatch(login());
       console.log('User logged in successfully');
       navigate('/dashboard');
     } else {

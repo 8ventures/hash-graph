@@ -21,4 +21,6 @@ router.post(
 router.post('/login', controllers.login);
 router.post('/logout', authMiddleware, controllers.logout);
 
+router.get('/getUser', authMiddleware, controllers.getUser);
+
 module.exports = router;

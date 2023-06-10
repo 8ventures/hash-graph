@@ -2,7 +2,7 @@ import React from 'react';
 import Footer from './Footer';
 import Header from './header';
 
-const NotFound = () => {
+const NotAuthenticated = () => {
   return (
     <>
       <Header></Header>
@@ -25,11 +25,10 @@ const NotFound = () => {
           </div>
         </div>
         <h1 class="mt-5 text-[36px] font-bold text-slate-800 lg:text-[50px]">
-          404 - Page not found
+          User not authenticated
         </h1>
         <p class="text-slate-600 mt-5 lg:text-lg">
-          The page you are looking for doesn't exist or <br />
-          has been removed.
+          Please login to access this page.
         </p>
       </div>
       <Footer></Footer>
@@ -37,4 +36,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default NotAuthenticated;

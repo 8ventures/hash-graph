@@ -8,6 +8,7 @@ import RegistrationForm from './components/RegistrationForm';
 import LoginForm from './components/LoginForm';
 import NotFound from './components/NotFound';
 import Dashboard from './components/Dashboard';
+import NotAuthenticated from './components/NotAuthenticated';
 
 function App() {
   const router = createBrowserRouter([

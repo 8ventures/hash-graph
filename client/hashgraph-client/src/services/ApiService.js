@@ -51,4 +51,21 @@ apiService.logout = async () => {
   }
 };
 
+apiService.getUser = async () => {
+  const cookieValue = document.cookie;
+  try {
+    const response = await fetch(`${SERVER_URL}/getUser`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: `${cookieValue}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export default apiService;

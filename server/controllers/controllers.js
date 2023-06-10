@@ -77,4 +77,20 @@ controllers.logout = async (req, res) => {
   return res.status(200).send('User logged out');
 };
 
+controllers.getUser = async (req, res) => {
+  console.log('🔑 Getting user');
+  try {
+    const user = await User.findOne({ username: req.session.user });
+    if (!user) {
+      console.log('❌ Error getting user: user not found');
+      return res.status(400).send('User not found');
+    }
+    console.log('✅ User found:', user);
+    return res.status(200).send(user);
+  } catch (error) {
+    console.log('❌ Error getting user:', error);
+    return res.status(500).send(error);
+  }
+};
+
 module.exports = controllers;

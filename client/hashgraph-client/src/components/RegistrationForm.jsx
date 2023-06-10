@@ -1,12 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
-import Header from './Header';
+import Header from './header';
 import Footer from './Footer';
 import apiService from '../services/ApiService';
+import { login } from '../redux/authActions';
 
 const RegistrationForm = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState('');
@@ -27,8 +30,10 @@ const RegistrationForm = () => {
     };
 
     const response = await apiService.register(user);
+    console.log(response);
     if (response.status === 201) {
       console.log('User created successfully');
+      await dispatch(login());
       navigate('/dashboard');
     } else {
       const responseBody = await response.text(); // Read the response body as JSON
