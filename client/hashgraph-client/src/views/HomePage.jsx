@@ -1,7 +1,8 @@
 import React from 'react';
 import hero from '../assets/hero-image.jpg';
-import Header from '../components/Header';
+import Header from '../components/header';
 import Footer from '../components/Footer';
+import MarketNewsWidget from '../components/MarketOverview';
 const HomePage = () => {
   return (
     <>
@@ -32,6 +33,9 @@ const HomePage = () => {
                 make data-driven decisions.
               </p>
             </div>
+          </div>
+          <div className="container px-5 py-8 mx-auto flex sm:flex-row flex-col">
+            <MarketNewsWidget> </MarketNewsWidget>
           </div>
         </section>
         <Footer> </Footer>

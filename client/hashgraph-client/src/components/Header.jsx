@@ -26,7 +26,14 @@ const Header = () => {
     }
   };
   const handleClickLogo = function () {
-    navigate('/');
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      navigate('/');
+    }
+  };
+  const handleClicDashboard = function () {
+    navigate('/dashboard');
   };
 
   useEffect(() => {
@@ -45,6 +52,14 @@ const Header = () => {
           <span className=" text-xl font-bold text-yellow-500	 ">Graph</span>
         </a>
         <div className="md:ml-auto flex flex-wrap items-center text-base justify-center">
+          {isAuthenticated && (
+            <button
+              className="inline-flex items-center bg-yellow-400 border-0 py-1 px-3 focus:outline-none hover:bg-yellow-500  rounded text-base m-2 font-semibold"
+              onClick={handleClicDashboard}
+            >
+              Dashboard
+            </button>
+          )}
           {!isAuthenticated && (
             <button
               className="inline-flex items-center bg-yellow-400 border-0 py-1 px-3 focus:outline-none hover:bg-yellow-500 rounded text-base m-2 font-semibold"

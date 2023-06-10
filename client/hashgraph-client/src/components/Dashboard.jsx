@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import Header from './header';
 import Chart from './Chart';
@@ -10,6 +10,7 @@ import apiService from '../services/ApiService';
 
 const Dashboard = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const navigate = useNavigate();
   const [chartData, setChartData] = useState([]);
   const [user, setUser] = useState({});
 
@@ -66,39 +67,50 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated === false) {
-      redirect('/not-authenticated');
+    if (isAuthenticated) {
+      getUser();
     }
-    getUser();
   }, []);
 
-  return (
-    <>
-      <div className="flex flex-col h-screen">
-        <Header> </Header>
-        <div className="container px-5 py-8 mx-auto flex sm:flex-row flex-col">
-          WELCOME {user.firstName} {user.lastName}
-        </div>
-        <div className="container px-5 py-8 mx-auto flex sm:flex-row flex-col">
-          <div className="container px-5 py-8 mx-auto items-center h-full justify-center flex w-1/4">
-            <Dropdown> </Dropdown>
+  if (!isAuthenticated) {
+    navigate('./not-authenticated');
+  }
+
+  if (isAuthenticated) {
+    return (
+      <>
+        <div className="flex flex-col h-screen">
+          <Header> </Header>
+          <div className="container px-5 py-8 mx-auto flex sm:flex-row flex-col">
+            <span className=" text-2xl font-bold mr-1	">
+              {' '}
+              🚀 {user.firstName}
+            </span>
+            <span className=" text-2xl font-bold text-yellow-500  ">
+              {user.lastName}
+            </span>
           </div>
-          <div className="grid  container mx-auto ">
-            <div className=" container px-5 py-8 mx-auto my-8 items-center min-h-max justify-center rounded-lg border-solid border-2 border-yellow-400 shadow-2xl">
-              <Chart data={chartData}></Chart>
+          <div className="container px-5 py-8 mx-auto flex sm:flex-row flex-col">
+            <div className="container px-5 py-8 mx-auto items-center h-full justify-center flex w-1/4">
+              <Dropdown> </Dropdown>
             </div>
-            <div className=" container px-5 py-8 mx-auto my-auto items-center min-h-max justify-center rounded-lg border-solid border-2 border-yellow-400 shadow-2xl">
-              <Chart data={chartData}></Chart>
+            <div className="grid  container mx-auto ">
+              <div className=" container px-5 py-8 mx-auto my-8 items-center min-h-max justify-center rounded-lg border-solid border-2 border-yellow-400 shadow-2xl">
+                <Chart data={chartData}></Chart>
+              </div>
+              <div className=" container px-5 py-8 mx-auto my-auto items-center min-h-max justify-center rounded-lg border-solid border-2 border-yellow-400 shadow-2xl">
+                <Chart data={chartData}></Chart>
+              </div>
             </div>
           </div>
+          <div className="container px-5 py-8 mx-auto flex h-full sm:flex-row flex-col">
+            FAVOURITES
+          </div>
+          <Footer> </Footer>
         </div>
-        <div className="container px-5 py-8 mx-auto flex h-full sm:flex-row flex-col">
-          FAVOURITES
-        </div>
-        <Footer> </Footer>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 };
 
 export default Dashboard;

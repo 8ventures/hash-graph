@@ -29,6 +29,10 @@ function App() {
       element: <Dashboard></Dashboard>,
     },
     {
+      path: '/not-authenticated',
+      element: <NotAuthenticated></NotAuthenticated>,
+    },
+    {
       path: '*',
       element: <NotFound></NotFound>,
     },
