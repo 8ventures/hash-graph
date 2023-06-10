@@ -1,14 +1,12 @@
 import { createChart, ColorType } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
 
-const Chart = ({ data, colors }) => {
-  const {
-    backgroundColor,
-    lineColor,
-    textColor,
-    areaTopColor,
-    areaBottomColor,
-  } = colors;
+const Chart = ({ data }) => {
+  const backgroundColor = 'white';
+  const lineColor = '#2962FF';
+  const textColor = 'black';
+  const areaTopColor = '#2962FF';
+  const areaBottomColor = 'rgba(41, 98, 255, 0.28)';
 
   const chartContainerRef = useRef();
 
@@ -23,11 +21,25 @@ const Chart = ({ data, colors }) => {
         textColor,
       },
       width: chartContainerRef.current.clientWidth,
-      height: 300,
+      height: 400,
     });
-    chart.timeScale().fitContent();
 
-    const newSeries = chart.addAreaSeries({
+    const timescale = chart.timeScale();
+    timescale.fitContent();
+
+    timescale.applyOptions({
+      timeVisible: true,
+      secondsVisible: true,
+      ticksVisible: true,
+      lockVisibleTimeRangeOnResize: true,
+      rightOffset: 12,
+      borderVisible: true,
+      fixLeftEdge: true,
+      fixRightEdge: true,
+      barSpacing: 3,
+    });
+
+    const newSeries = chart.addCandlestickSeries({
       lineColor,
       topColor: areaTopColor,
       bottomColor: areaBottomColor,

@@ -11,9 +11,13 @@ socket.on('open', () => {
   const hello = {
     type: 'hello',
     apikey: API_KEY,
-    heartbeat: true,
+    heartbeat: false,
     subscribe_data_type: ['ohlcv'],
-    subscribe_filter_asset_id: ['ETH'],
+    subscribe_filter_symbol_id: [
+      'COINBASE_SPOT_ETH_USD',
+      // 'COINBASE_SPOT_BTC_USD',
+    ],
+    subscribe_filter_period_id: ['1SEC'],
   };
   socket.send(JSON.stringify(hello));
 });

@@ -49,7 +49,7 @@ apiSocket.on('message', (message) => {
     socket.send('pong');
     console.log('Sent Pong');
   } else {
-    io.emit('apiData', JSON.parse(message));
+    io.emit('apiData', message);
   }
 });
 

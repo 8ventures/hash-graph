@@ -12,8 +12,12 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@headlessui/react": "^1.7.15",
+    "@heroicons/react": "^2.0.18",
     "@reduxjs/toolkit": "^1.9.5",
+    "install": "^0.13.0",
     "lightweight-charts": "^4.0.1",
+    "npm": "^9.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.7",
