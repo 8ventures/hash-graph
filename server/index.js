@@ -5,6 +5,7 @@ const session = require('express-session');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const apiSocket = require('./ws.js');
+const merger = require('./middlewares/mergeData.js');
 
 const app = express();
 const port = 3000;
@@ -42,15 +43,24 @@ app.get('*', (_, res) => {
 
 io.on('connection', (socket) => {
   console.log(`Socket ${socket.id} connected`);
-});
-
-apiSocket.on('message', (message) => {
-  if (message === 'ping') {
-    socket.send('pong');
-    console.log('Sent Pong');
-  } else {
-    io.emit('apiData', message);
-  }
+  let newDataListener;
+  socket.on('requestData', (payload) => {
+    console.log(`Received request for data from Socket ${socket.id}:`, payload);
+    if (newDataListener) {
+      apiSocket.off('message', newDataListener);
+    }
+    newDataListener = async (message) => {
+      const mergedData = await merger(message, payload);
+      console.log(mergedData);
+      if (mergedData) socket.emit('apiData', mergedData);
+    };
+    apiSocket.on('message', newDataListener);
+  });
+  socket.on('disconnect', () => {
+    if (newDataListener) {
+      apiSocket.off('message', newDataListener);
+    }
+  });
 });
 
 httpServer.listen(port, host, () => {

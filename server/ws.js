@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+const availableData = require('./availableData.js');
 
 const API_KEY = 'F197CEFC-0716-48B2-BE2D-BB213C6E17D4';
 const API_URL = 'wss://ws-sandbox.coinapi.io/v1/';
@@ -13,13 +14,15 @@ socket.on('open', () => {
     apikey: API_KEY,
     heartbeat: false,
     subscribe_data_type: ['ohlcv'],
-    subscribe_filter_symbol_id: [
-      'COINBASE_SPOT_ETH_USD',
-      // 'COINBASE_SPOT_BTC_USD',
-    ],
-    subscribe_filter_period_id: ['1SEC'],
+    subscribe_filter_symbol_id: availableData.symbols,
+    subscribe_filter_period_id: availableData.periods,
   };
   socket.send(JSON.stringify(hello));
+});
+
+socket.on('ping', () => {
+  socket.send('pong');
+  console.log('Sent Pong');
 });
 
 socket.on('close', () => {
