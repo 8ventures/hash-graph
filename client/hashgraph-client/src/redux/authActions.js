@@ -10,3 +10,12 @@ export const setUser = (user) => ({
   type: 'SET_USER',
   payload: user,
 });
+
+export const setFavorite = (favorite) => ({
+  type: 'SET_FAVORITE',
+  payload: favorite,
+});
+
+export const cleanFavorite = () => ({
+  type: 'CLEAN_FAVORITE',
+});

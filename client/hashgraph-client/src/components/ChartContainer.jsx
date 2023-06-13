@@ -3,14 +3,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import { StarIcon } from '@heroicons/react/solid';
 import apiService from '../services/ApiService';
+import { cleanFavorite } from '../redux/authActions';
 
 import Chart from './Chart';
 import Dropdown from './Dropdown';
 
 const ChartContainer = () => {
   const user = useSelector((state) => state.auth.user);
+  const favorite = useSelector((state) => state.auth.favorite);
+  let favSelected = {};
   const dispatch = useDispatch();
-  const socket = io('http://localhost:3000');
+  // const socket = io('http://localhost:3000');
   const [chartData, setChartData] = useState([]);
   const [exchange, setExchange] = useState('');
   const [instrument, setInstrument] = useState('');
@@ -29,6 +32,7 @@ const ChartContainer = () => {
     const getUserResponse = await getUser.json();
     dispatch({ type: 'SET_USER', payload: getUserResponse });
     return getUserResponse;
+    console.log('getUserResponse', getUserResponse);
   };
 
   const handleSelect = async (value, dropdownType) => {
@@ -67,41 +71,32 @@ const ChartContainer = () => {
       symbol: `${exchange}_${instrument}_${pair}`,
       interval: period,
     };
-    console.log('payload', payload);
-
-    // socket.emit('clientConnect', payload);
-    // setChartData([]);
-    // setRequest(`${exchange}_${instrument}_${pair}`);
-    socket.emit('clientConnect', {
-      symbol: `${exchange}_${instrument}_${pair}`,
-      interval: period,
-    });
-    socket.on('serverResponse', (data) => {
-      console.log('data: ', data);
-    });
+    setChartData([]);
+    socket.emit('clientConnect', payload);
+    socket.on('serverResponse', handleSocketData);
   };
 
   const handleSocketData = (data) => {
-    // console.log();
-    // const ohlcData = [
-    //   {
-    //     time: Date.parse(data.time_period_start) / 1000,
-    //     open: data.price_open,
-    //     high: data.price_high,
-    //     low: data.price_low,
-    //     close: data.price_close,
-    //   },
-    // ];
-    // setChartData((chartData) => {
-    //   const latestTime = ohlcData[0].time;
-    //   const lastTime =
-    //     chartData.length > 0 ? chartData[chartData.length - 1].time : 0;
-    //   if (latestTime > lastTime) {
-    //     return [...chartData, ...ohlcData];
-    //   } else {
-    //     return chartData;
-    //   }
-    // });
+    console.log(data);
+    const ohlcData = [
+      {
+        time: Date.parse(data.time_period_start) / 1000,
+        open: data.price_open,
+        high: data.price_high,
+        low: data.price_low,
+        close: data.price_close,
+      },
+    ];
+    setChartData((chartData) => {
+      const latestTime = ohlcData[0].time;
+      const lastTime =
+        chartData.length > 0 ? chartData[chartData.length - 1].time : 0;
+      if (latestTime > lastTime) {
+        return [...chartData, ...ohlcData];
+      } else {
+        return chartData;
+      }
+    });
   };
 
   useEffect(() => {
@@ -109,8 +104,24 @@ const ChartContainer = () => {
       (favorite) => favorite.symbol === symbol && favorite.interval === period
     );
     setIsFavorite(isFavorite);
-    console.log('isFavorite: ', isFavorite);
-  }, [symbol, period, user.favorites]);
+  }, [symbol, period, user.favorites, favorite]);
+
+  useEffect(() => {
+    const isFavorite = user.favorites.find(
+      (favorite) => favorite.symbol === symbol && favorite.interval === period
+    );
+    setIsFavorite(isFavorite);
+    console.log('favorite', favorite);
+    if (favorite) {
+      setExchange(favorite.symbol.split('_')[0]);
+      setInstrument(favorite.symbol.split('_')[1]);
+      setPair(
+        favorite.symbol.split('_')[2] + '_' + favorite.symbol.split('_')[3]
+      );
+      setPeriod(favorite.period);
+      setSymbol(`${exchange}_${instrument}_${pair}`);
+    }
+  }, [favorite]);
 
   const allSelectionsMade = exchange && instrument && pair && period;
 
@@ -123,7 +134,7 @@ const ChartContainer = () => {
               options={exchangeOptions}
               onSelect={(value) => handleSelect(value, 'Exchange')}
               onChange={handleSelect}
-              name="Exchange"
+              name={exchange ? exchange : 'Exchange'}
             ></Dropdown>
           </div>
           <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
@@ -131,7 +142,7 @@ const ChartContainer = () => {
               options={instrumentOptions}
               onSelect={(value) => handleSelect(value, 'Instrument')}
               onChange={handleSelect}
-              name="Instrument"
+              name={instrument ? instrument : 'Instrument'}
             ></Dropdown>
           </div>
           <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
@@ -139,7 +150,7 @@ const ChartContainer = () => {
               options={pairOptions}
               onSelect={(value) => handleSelect(value, 'Pair')}
               onChange={handleSelect}
-              name="Pair"
+              name={pair ? pair : 'Pair'}
             ></Dropdown>
           </div>
           <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
@@ -147,7 +158,7 @@ const ChartContainer = () => {
               options={periodOptions}
               onSelect={(value) => handleSelect(value, 'Period')}
               onChange={handleSelect}
-              name="Period"
+              name={period ? period : 'Period'}
             ></Dropdown>
           </div>
           <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">

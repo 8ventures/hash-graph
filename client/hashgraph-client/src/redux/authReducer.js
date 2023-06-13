@@ -7,6 +7,7 @@ const initialState = {
     lastName: '',
     favorites: [],
   },
+  favorite: '',
 };
 
 const authReducer = (state = initialState, action) => {
@@ -25,6 +26,17 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload,
+      };
+    case 'SET_FAVORITE':
+      return {
+        ...state,
+        favorite: action.payload,
+      };
+
+    case 'CLEAN_FAVORITE':
+      return {
+        ...state,
+        favorite: '',
       };
     default:
       return state;
