@@ -21,7 +21,7 @@ const Chart = ({ data }) => {
         textColor,
       },
       width: chartContainerRef.current.clientWidth,
-      height: 400,
+      height: 600,
     });
 
     const timescale = chart.timeScale();

@@ -4,7 +4,8 @@ const router = require('./router.js');
 const session = require('express-session');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const connectToCoinApi = require('./ws.js');
+// const apiSocket = require('./ws.js');
+const merger = require('./middlewares/mergeData.js');
 
 const app = express();
 const port = 3000;
@@ -40,37 +41,18 @@ app.get('*', (_, res) => {
   res.status(404).send('404 Not Found');
 });
 
-io.on('connection', (socket) => {
-  socket.on('clientConnect', (payload) => {
-    const { symbol, period } = payload;
-    // Connect to CoinApi with the received symbols and periods
-    console.log(payload);
-    const coinApiSocket = connectToCoinApi(symbol, period);
+// io.on('connection', (socket) => {
+//   console.log('A user connected');
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected');
+//   });
 
-    // Handle WebSocket events from CoinApi
-    coinApiSocket.on('message', (data) => {
-      console.log('Received data from CoinApi:', data);
-      socket.emit('coinApiData', data);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('A client disconnected.');
-      coinApiSocket.close(); // Close the CoinApi WebSocket connection when a client disconnects
-    });
-  });
-
-  socket.on('clientModify', (payload) => {
-    const { symbol, period } = payload;
-
-    if (coinApiSocket) {
-      coinApiSocket.close(); // Close the CoinApi WebSocket connection when a client disconnects
-    }
-    coinApiSocket = connectToCoinApi(symbol, period);
-    coinApiSocket.on('message', (data) => {
-      socket.emit('coinApiData', data);
-    });
-  });
-});
+//   apiSocket.on('message', async (data) => {
+//     jsonData = await merger(data);
+//     console.log(jsonData);
+//     socket.emit('message', jsonData);
+//   });
+// });
 
 httpServer.listen(port, host, () => {
   console.log(`🚀 HashGraph Server listening at http://${host}:${port}`);
