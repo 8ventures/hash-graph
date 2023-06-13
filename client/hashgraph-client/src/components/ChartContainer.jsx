@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
+import { StarIcon } from '@heroicons/react/solid';
 
 import Chart from './Chart';
 import Dropdown from './Dropdown';
@@ -41,6 +42,9 @@ const ChartContainer = () => {
     }
   };
 
+  const handleFavorite = () => {
+    console.log('Favorite: ', request);
+  };
   const handleRequest = () => {
     setChartData([]);
     setRequest(`${exchange}_${instrument}_${pair}`);
@@ -86,36 +90,36 @@ const ChartContainer = () => {
   return (
     <>
       <div className="container px-5 py-8 mx-auto flex sm:flex-row flex-col">
-        <div className="container px-5 py-8 mx-auto items-center justify-center flex-column w-1/4 flex-wrap">
-          <div className="container px-5 py-8 mx-auto items-center justify-center inline-flex">
+        <div className="px-5 py-8 mx-auto items-center justify-center flex-column w-full sm:w-1/4 flex-wrap">
+          <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
             <Dropdown
               options={exchangeOptions}
               onSelect={(value) => handleSelect(value, 'Exchange')}
               name="Exchange"
             ></Dropdown>
           </div>
-          <div className="container px-5 py-8 mx-auto items-center justify-center inline-flex">
+          <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
             <Dropdown
               options={instrumentOptions}
               onSelect={(value) => handleSelect(value, 'Instrument')}
               name="Instrument"
             ></Dropdown>
           </div>
-          <div className="container px-5 py-8 mx-auto items-center justify-center inline-flex">
+          <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
             <Dropdown
               options={pairOptions}
               onSelect={(value) => handleSelect(value, 'Pair')}
               name="Pair"
             ></Dropdown>
           </div>
-          <div className="container px-5 py-8 mx-auto items-center justify-center inline-flex ">
+          <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
             <Dropdown
               options={periodOptions}
               onSelect={(value) => handleSelect(value, 'Period')}
               name="Period"
             ></Dropdown>
           </div>
-          <div className="container px-5 py-8 mx-auto items-center justify-center inline-flex ">
+          <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
             <button
               className={`inline-flex w-full items-center justify-center bg-yellow-400 border-0 py-1 px-5 focus:outline-none hover:bg-yellow-500 rounded text-base font-semibold ${
                 !allSelectionsMade
@@ -126,6 +130,19 @@ const ChartContainer = () => {
               disabled={!allSelectionsMade}
             >
               Request
+            </button>
+          </div>
+          <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
+            <button
+              className={`inline-flex w-full items-center justify-center bg-yellow-400 border-0 py-1 px-5 focus:outline-none hover:bg-yellow-500 rounded text-base font-semibold ${
+                !allSelectionsMade
+                  ? 'bg-gray-400 opacity-50 cursor-not-allowed hover:bg-gray-400  '
+                  : ''
+              }`}
+              onClick={handleFavorite}
+              disabled={!allSelectionsMade}
+            >
+              <StarIcon className="w-5 h-5 mr-2" /> Add to Favorites
             </button>
           </div>
         </div>
