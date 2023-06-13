@@ -68,4 +68,40 @@ apiService.getUser = async () => {
   }
 };
 
+apiService.addFavorite = async (symbol, interval) => {
+  const cookieValue = document.cookie;
+  try {
+    const response = await fetch(`${SERVER_URL}/addFavorite`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: `${cookieValue}`,
+      },
+      body: JSON.stringify({ symbol, interval }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+apiService.removeFavorite = async (symbol, interval) => {
+  const cookieValue = document.cookie;
+  try {
+    const response = await fetch(`${SERVER_URL}/removeFavorite`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: `${cookieValue}`,
+      },
+      body: JSON.stringify({ symbol, interval }),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export default apiService;

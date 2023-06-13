@@ -85,10 +85,76 @@ controllers.getUser = async (req, res) => {
       console.log('❌ Error getting user: user not found');
       return res.status(400).send('User not found');
     }
-    console.log('✅ User found:', user);
+    console.log('✅ User found');
     return res.status(200).send(user);
   } catch (error) {
     console.log('❌ Error getting user:', error);
+    return res.status(500).send(error);
+  }
+};
+
+controllers.addFavorite = async (req, res) => {
+  console.log('🔑 Adding favorite');
+  const favorite = req.body;
+  console.log(favorite);
+  if (!favorite) {
+    console.log('❌ Error adding favorite: favorite required');
+    return res.status(400).send('Favorite required');
+  }
+  try {
+    const user = await User.findOne({ username: req.session.user });
+    if (!user) {
+      console.log('❌ Error adding favorite: user not found');
+      return res.status(400).send('User not found');
+    }
+    const existingFavorite = user.favorites.find(
+      (f) => f.symbol === favorite.symbol && f.interval === favorite.interval
+    );
+
+    if (existingFavorite) {
+      console.log('❌ Error adding favorite: favorite already exists');
+      return res.status(409).send('Favorite already exists');
+    }
+    user.favorites.push(favorite);
+    await user.save();
+    console.log('✅ Favorite added:', favorite);
+    return res.status(200).send(user);
+  } catch (error) {
+    console.log('❌ Error adding favorite:', error);
+    return res.status(500).send(error);
+  }
+};
+
+controllers.removeFavorite = async (req, res) => {
+  console.log('🔑 Removing favorite');
+  const favorite = req.body;
+  if (!favorite) {
+    console.log('❌ Error removing favorite: favorite required');
+    return res.status(400).send('Favorite required');
+  }
+
+  try {
+    const user = await User.findOne({ username: req.session.user });
+    if (!user) {
+      console.log('❌ Error removing favorite: user not found');
+      return res.status(400).send('User not found');
+    }
+    const existingFavorite = user.favorites.find(
+      (f) => f.symbol === favorite.symbol && f.interval === favorite.interval
+    );
+
+    if (!existingFavorite) {
+      console.log('❌ Error removing favorite: favorite not found');
+      return res.status(400).send('Favorite not found');
+    }
+    user.favorites = user.favorites.filter(
+      (f) => f.symbol !== favorite.symbol || f.interval !== favorite.interval
+    );
+    await user.save();
+    console.log('✅ Favorite removed:', favorite);
+    return res.status(200).send(user);
+  } catch (error) {
+    console.log('❌ Error removing favorite:', error);
     return res.status(500).send(error);
   }
 };

@@ -1,89 +1,113 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import { StarIcon } from '@heroicons/react/solid';
+import apiService from '../services/ApiService';
 
 import Chart from './Chart';
 import Dropdown from './Dropdown';
 
 const ChartContainer = () => {
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+
   const [chartData, setChartData] = useState([]);
   const [exchange, setExchange] = useState('');
   const [instrument, setInstrument] = useState('');
   const [pair, setPair] = useState('');
   const [period, setPeriod] = useState('');
-  const [request, setRequest] = useState('');
-  const socket = io('http://localhost:3000/');
+  const [symbol, setSymbol] = useState('');
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const exchangeOptions = ['BINANCE', 'COINBASE', 'BITSTAMP', 'KRAKEN'];
   const instrumentOptions = ['SPOT'];
   const pairOptions = ['BTC_USD', 'ETH_USD'];
   const periodOptions = ['1SEC', '5SEC'];
 
+  const getUser = async () => {
+    const getUser = await apiService.getUser();
+    const getUserResponse = await getUser.json();
+    dispatch({ type: 'SET_USER', payload: getUserResponse });
+    return getUserResponse;
+  };
+
   const handleSelect = async (value, dropdownType) => {
     switch (dropdownType) {
       case 'Exchange':
         setExchange(value);
-        console.log('Selected Exchange: ', value);
+        setSymbol(`${value}_${instrument}_${pair}`);
         break;
       case 'Instrument':
         setInstrument(value);
-        console.log('Selected Instrument: ', value);
+        setSymbol(`${exchange}_${value}_${pair}`);
         break;
       case 'Pair':
         setPair(value);
-        console.log('Selected Pair: ', value);
+        setSymbol(`${exchange}_${instrument}_${value}`);
         break;
       case 'Period':
         setPeriod(value);
-        console.log('Selected Period: ', value);
         break;
       default:
         break;
     }
   };
 
-  const handleFavorite = () => {
-    console.log('Favorite: ', request);
+  const handleFavorite = async () => {
+    if (isFavorite) {
+      await apiService.removeFavorite(symbol, period);
+    } else {
+      await apiService.addFavorite(symbol, period);
+    }
+    getUser();
   };
-  const handleRequest = () => {
-    setChartData([]);
-    setRequest(`${exchange}_${instrument}_${pair}`);
 
-    socket.emit('requestData', {
-      symbol: `${exchange}_${instrument}_${pair}`,
-      interval: period,
-    });
+  const handleRequest = () => {
+    // setChartData([]);
+    // setRequest(`${exchange}_${instrument}_${pair}`);
+    // socket.emit('requestData', {
+    //   symbol: `${exchange}_${instrument}_${pair}`,
+    //   interval: period,
+    // });
   };
 
   const handleSocketData = (data) => {
-    console.log();
-    const ohlcData = [
-      {
-        time: Date.parse(data.time_period_start) / 1000,
-        open: data.price_open,
-        high: data.price_high,
-        low: data.price_low,
-        close: data.price_close,
-      },
-    ];
-    setChartData((chartData) => {
-      const latestTime = ohlcData[0].time;
-      const lastTime =
-        chartData.length > 0 ? chartData[chartData.length - 1].time : 0;
-      if (latestTime > lastTime) {
-        return [...chartData, ...ohlcData];
-      } else {
-        return chartData;
-      }
-    });
+    // console.log();
+    // const ohlcData = [
+    //   {
+    //     time: Date.parse(data.time_period_start) / 1000,
+    //     open: data.price_open,
+    //     high: data.price_high,
+    //     low: data.price_low,
+    //     close: data.price_close,
+    //   },
+    // ];
+    // setChartData((chartData) => {
+    //   const latestTime = ohlcData[0].time;
+    //   const lastTime =
+    //     chartData.length > 0 ? chartData[chartData.length - 1].time : 0;
+    //   if (latestTime > lastTime) {
+    //     return [...chartData, ...ohlcData];
+    //   } else {
+    //     return chartData;
+    //   }
+    // });
   };
 
   useEffect(() => {
-    socket.on('apiData', handleSocketData);
-    return () => {
-      socket.off('apiData', handleSocketData);
-    };
+    // socket.on('apiData', handleSocketData);
+    // return () => {
+    //   socket.off('apiData', handleSocketData);
+    // };
   }, []);
+
+  useEffect(() => {
+    const isFavorite = user.favorites.find(
+      (favorite) => favorite.symbol === symbol && favorite.interval === period
+    );
+    setIsFavorite(isFavorite);
+    console.log('isFavorite: ', isFavorite);
+  }, [symbol, period, user.favorites]);
 
   const allSelectionsMade = exchange && instrument && pair && period;
 
@@ -95,6 +119,7 @@ const ChartContainer = () => {
             <Dropdown
               options={exchangeOptions}
               onSelect={(value) => handleSelect(value, 'Exchange')}
+              onChange={handleSelect}
               name="Exchange"
             ></Dropdown>
           </div>
@@ -102,6 +127,7 @@ const ChartContainer = () => {
             <Dropdown
               options={instrumentOptions}
               onSelect={(value) => handleSelect(value, 'Instrument')}
+              onChange={handleSelect}
               name="Instrument"
             ></Dropdown>
           </div>
@@ -109,6 +135,7 @@ const ChartContainer = () => {
             <Dropdown
               options={pairOptions}
               onSelect={(value) => handleSelect(value, 'Pair')}
+              onChange={handleSelect}
               name="Pair"
             ></Dropdown>
           </div>
@@ -116,6 +143,7 @@ const ChartContainer = () => {
             <Dropdown
               options={periodOptions}
               onSelect={(value) => handleSelect(value, 'Period')}
+              onChange={handleSelect}
               name="Period"
             ></Dropdown>
           </div>
@@ -142,7 +170,8 @@ const ChartContainer = () => {
               onClick={handleFavorite}
               disabled={!allSelectionsMade}
             >
-              <StarIcon className="w-5 h-5 mr-2" /> Add to Favorites
+              <StarIcon className="w-5 h-5 mr-2" />{' '}
+              {isFavorite ? 'Remove Favorite' : 'Add Favorite'}
             </button>
           </div>
         </div>

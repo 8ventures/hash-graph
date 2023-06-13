@@ -22,5 +22,7 @@ router.post('/login', controllers.login);
 router.post('/logout', authMiddleware, controllers.logout);
 
 router.get('/getUser', authMiddleware, controllers.getUser);
+router.post('/addFavorite', authMiddleware, controllers.addFavorite);
+router.post('/removeFavorite', authMiddleware, controllers.removeFavorite);
 
 module.exports = router;
