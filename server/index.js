@@ -4,8 +4,7 @@ const router = require('./router.js');
 const session = require('express-session');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const apiSocket = require('./ws.js');
-const merger = require('./middlewares/mergeData.js');
+const connectToCoinApi = require('./ws.js');
 
 const app = express();
 const port = 3000;
@@ -42,24 +41,34 @@ app.get('*', (_, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log(`Socket ${socket.id} connected`);
-  let newDataListener;
-  socket.on('requestData', (payload) => {
-    console.log(`Received request for data from Socket ${socket.id}:`, payload);
-    if (newDataListener) {
-      apiSocket.off('message', newDataListener);
-    }
-    newDataListener = async (message) => {
-      const mergedData = await merger(message, payload);
-      console.log(mergedData);
-      if (mergedData) socket.emit('apiData', mergedData);
-    };
-    apiSocket.on('message', newDataListener);
+  socket.on('clientConnect', (payload) => {
+    const { symbol, period } = payload;
+    // Connect to CoinApi with the received symbols and periods
+    console.log(payload);
+    const coinApiSocket = connectToCoinApi(symbol, period);
+
+    // Handle WebSocket events from CoinApi
+    coinApiSocket.on('message', (data) => {
+      console.log('Received data from CoinApi:', data);
+      socket.emit('coinApiData', data);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('A client disconnected.');
+      coinApiSocket.close(); // Close the CoinApi WebSocket connection when a client disconnects
+    });
   });
-  socket.on('disconnect', () => {
-    if (newDataListener) {
-      apiSocket.off('message', newDataListener);
+
+  socket.on('clientModify', (payload) => {
+    const { symbol, period } = payload;
+
+    if (coinApiSocket) {
+      coinApiSocket.close(); // Close the CoinApi WebSocket connection when a client disconnects
     }
+    coinApiSocket = connectToCoinApi(symbol, period);
+    coinApiSocket.on('message', (data) => {
+      socket.emit('coinApiData', data);
+    });
   });
 });
 

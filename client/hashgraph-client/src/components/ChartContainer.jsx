@@ -10,7 +10,7 @@ import Dropdown from './Dropdown';
 const ChartContainer = () => {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
-
+  const socket = io('http://localhost:3000');
   const [chartData, setChartData] = useState([]);
   const [exchange, setExchange] = useState('');
   const [instrument, setInstrument] = useState('');
@@ -63,12 +63,22 @@ const ChartContainer = () => {
   };
 
   const handleRequest = () => {
+    const payload = {
+      symbol: `${exchange}_${instrument}_${pair}`,
+      interval: period,
+    };
+    console.log('payload', payload);
+
+    // socket.emit('clientConnect', payload);
     // setChartData([]);
     // setRequest(`${exchange}_${instrument}_${pair}`);
-    // socket.emit('requestData', {
-    //   symbol: `${exchange}_${instrument}_${pair}`,
-    //   interval: period,
-    // });
+    socket.emit('clientConnect', {
+      symbol: `${exchange}_${instrument}_${pair}`,
+      interval: period,
+    });
+    socket.on('serverResponse', (data) => {
+      console.log('data: ', data);
+    });
   };
 
   const handleSocketData = (data) => {
@@ -93,13 +103,6 @@ const ChartContainer = () => {
     //   }
     // });
   };
-
-  useEffect(() => {
-    // socket.on('apiData', handleSocketData);
-    // return () => {
-    //   socket.off('apiData', handleSocketData);
-    // };
-  }, []);
 
   useEffect(() => {
     const isFavorite = user.favorites.find(
