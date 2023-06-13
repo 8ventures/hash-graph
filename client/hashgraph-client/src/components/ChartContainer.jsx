@@ -116,7 +116,7 @@ const ChartContainer = () => {
 
   return (
     <>
-      <div className="container px-5 py-8 mx-auto flex sm:flex-row flex-col">
+      <div className="container px-5 py-0 mx-auto flex sm:flex-row flex-col">
         <div className="px-5 py-8 mx-auto items-center justify-center flex-column w-full sm:w-1/4 flex-wrap">
           <div className="px-5 py-8 mx-auto items-center justify-center inline-flex w-full">
             <Dropdown

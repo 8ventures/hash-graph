@@ -34,7 +34,7 @@ const Dashboard = () => {
       <>
         <div className="flex flex-col h-full">
           <Header> </Header>
-          <div className=" container px-5 py-8 mx-auto flex sm:flex-row flex-col h-full justify-center align-middle">
+          <div className=" container px-5 py-0 mx-auto flex flex-row h-full justify-center align-middle">
             <span className=" text-2xl font-bold mr-1	">
               {' '}
               🚀 {user.firstName}
@@ -43,12 +43,13 @@ const Dashboard = () => {
               {user.lastName}
             </span>
           </div>
-          <div className=" container px-5 py-8 mx-auto flex sm:flex-row flex-col h-full flex-grow justify-center align-middle">
+          <div className=" container px-5 py-6 mx-auto my-8 items-center min-h-max justify-center rounded-lg border-solid border-2 border-yellow-400 shadow-2xl">
             <FavoritesList favorites={user.favorites}> </FavoritesList>
           </div>
+
+          <ChartContainer> </ChartContainer>
+          <Footer> </Footer>
         </div>
-        <ChartContainer> </ChartContainer>
-        <Footer> </Footer>
       </>
     );
   }
