@@ -7,6 +7,12 @@
 - [Technologies](https://chat.openai.com/?model=gpt-4#technologies)
 - [Setup](https://chat.openai.com/?model=gpt-4#setup)
 
+## Project Background
+
+This application was built as a beginner solo project in the span of just one week during the Codeworks Software Engineering Bootcamp. Despite being a beginner-level project, HashGraph successfully encapsulates complex functionalities with real-time data processing, robust backend infrastructure, and a responsive frontend. It is a testament to the learnings and skills acquired in the bootcamp and the passion for software development.
+
+
+
 ## Introduction
 
 HashGraph is a robust web application that provides real-time cryptocurrency market data visualization. It aims to connect users with different markets and deliver crucial information about various cryptocurrencies. The application has been designed to offer a user-friendly interface that aids both novices and professionals in navigating the complex world of cryptocurrencies.
