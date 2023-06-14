@@ -1,6 +1,6 @@
 // const WebSocket = require('ws');
 
-// const API_KEY = 'AC806A39-C821-4F3F-9ADE-8D94D42520DF';
+// const API_KEY = 'APIKEY';
 // const API_URL = 'wss://ws-sandbox.coinapi.io/v1/';
 
 // const socket = new WebSocket(API_URL);
